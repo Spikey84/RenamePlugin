@@ -11,6 +11,7 @@ import java.io.Writer;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
+import me.spikey.spikeycooldownapi.API;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.plugin.PluginManager;
@@ -69,6 +70,8 @@ public class Main extends JavaPlugin {
 	
 	public static String prefix = Messager.color("&8[&bEpic&fRename&8] &f");
 
+	public static API cooldownAPI;
+
 	@Override
 	public void onDisable() {
 		Messager.msgConsole("&cPlugin Disabled.");
@@ -77,6 +80,7 @@ public class Main extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
+		cooldownAPI = new API("rename", "epicrename");
 		plugin = this;
 		
 		// Save default yaml files.

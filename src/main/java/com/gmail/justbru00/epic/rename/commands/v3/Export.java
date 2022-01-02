@@ -10,6 +10,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import com.gmail.justbru00.epic.rename.utils.v3.CF;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -28,6 +29,8 @@ import com.gmail.justbru00.epic.rename.utils.v3.EpicRenameOnlineAPI;
  *
  */
 public class Export implements CommandExecutor {
+
+
 	
 	private static ArrayList<UUID> playersWhoHaveConfirmed = new ArrayList<UUID>();
 
@@ -36,6 +39,7 @@ public class Export implements CommandExecutor {
 		
 		if (sender instanceof Player) {
 			Player p = (Player) sender;
+
 			if (sender.hasPermission("epicrename.export")) {
 				
 				if (args.length != 0) {

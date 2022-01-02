@@ -5,6 +5,7 @@
  */
 package com.gmail.justbru00.epic.rename.commands.v3;
 
+import com.gmail.justbru00.epic.rename.utils.v3.CF;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -17,6 +18,12 @@ import com.gmail.justbru00.epic.rename.utils.v3.RenameUtil;
 import com.gmail.justbru00.epic.rename.utils.v3.WorldChecker;
 
 public class Rename implements CommandExecutor {
+
+	int cooldownID = 9;
+
+	public Rename() {
+		Main.cooldownAPI.registerCooldown(cooldownID, "rename");
+	}
 
 	private static final EpicRenameCommands RENAME = EpicRenameCommands.RENAME;
 
@@ -34,8 +41,14 @@ public class Rename implements CommandExecutor {
 
 					if (player.hasPermission("epicrename.rename")) {
 
+						if (Main.cooldownAPI.isOnCooldown(player.getUniqueId(), cooldownID) && !player.hasPermission("epicrename.bypasscooldown")) {
+							Messager.msgSenderWithConfigMsg("rename.cooldown", sender, CF.getCoolDownTimeInDays(player.getUniqueId(), cooldownID));
+							return true;
+						}
+
 						if (args.length >= 1) {
 
+							Main.cooldownAPI.updateCooldown(player, cooldownID);
 							RenameUtil.renameHandle(player, args, RENAME);
 
 							return true;

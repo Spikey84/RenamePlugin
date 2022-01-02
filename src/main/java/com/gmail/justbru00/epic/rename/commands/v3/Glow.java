@@ -1,5 +1,6 @@
 package com.gmail.justbru00.epic.rename.commands.v3;
 
+import com.gmail.justbru00.epic.rename.utils.v3.*;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -14,16 +15,14 @@ import com.gmail.justbru00.epic.rename.enums.v3.EcoMessage;
 import com.gmail.justbru00.epic.rename.enums.v3.EpicRenameCommands;
 import com.gmail.justbru00.epic.rename.enums.v3.XpMessage;
 import com.gmail.justbru00.epic.rename.main.v3.Main;
-import com.gmail.justbru00.epic.rename.utils.v3.Blacklists;
-import com.gmail.justbru00.epic.rename.utils.v3.Debug;
-import com.gmail.justbru00.epic.rename.utils.v3.EconomyManager;
-import com.gmail.justbru00.epic.rename.utils.v3.MaterialPermManager;
-import com.gmail.justbru00.epic.rename.utils.v3.Messager;
-import com.gmail.justbru00.epic.rename.utils.v3.RenameUtil;
-import com.gmail.justbru00.epic.rename.utils.v3.WorldChecker;
-import com.gmail.justbru00.epic.rename.utils.v3.XpCostManager;
 
 public class Glow implements CommandExecutor {
+
+	int cooldownID = 3;
+
+	public Glow() {
+		Main.cooldownAPI.registerCooldown(cooldownID, "glow");
+	}
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -33,6 +32,11 @@ public class Glow implements CommandExecutor {
 			if (sender.hasPermission("epicrename.glow")) {
 				if (sender instanceof Player) {
 					Player player = (Player) sender;
+
+					if (Main.cooldownAPI.isOnCooldown(player.getUniqueId(), cooldownID) && !player.hasPermission("epicrename.bypasscooldown")) {
+						Messager.msgSenderWithConfigMsg("glow.cooldown", sender, CF.getCoolDownTimeInDays(player.getUniqueId(), cooldownID));
+						return true;
+					}
 
 					if (WorldChecker.checkWorld(player)) {
 						ItemStack inHand = RenameUtil.getInHand(player);
@@ -89,6 +93,7 @@ public class Glow implements CommandExecutor {
 
 									player.getInventory().setItemInMainHand(inHand);
 									Messager.msgSender(Main.getMsgFromConfig("glow.success"), sender);
+									Main.cooldownAPI.updateCooldown(player, cooldownID);
 									return true;
 								} else {
 									Debug.send("Item is not a fishing rod.");
@@ -117,6 +122,7 @@ public class Glow implements CommandExecutor {
 									} else { // Use older method.
 										player.setItemInHand(inHand);
 									}
+									Main.cooldownAPI.updateCooldown(player, cooldownID);
 									Messager.msgSender(Main.getMsgFromConfig("glow.success"), sender);
 									return true;
 								}

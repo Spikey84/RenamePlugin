@@ -7,6 +7,7 @@ package com.gmail.justbru00.epic.rename.commands.v3;
 
 import java.util.List;
 
+import com.gmail.justbru00.epic.rename.utils.v3.*;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -16,14 +17,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import com.gmail.justbru00.epic.rename.enums.v3.EpicRenameCommands;
 import com.gmail.justbru00.epic.rename.main.v3.Main;
-import com.gmail.justbru00.epic.rename.utils.v3.Blacklists;
-import com.gmail.justbru00.epic.rename.utils.v3.Debug;
-import com.gmail.justbru00.epic.rename.utils.v3.MaterialPermManager;
-import com.gmail.justbru00.epic.rename.utils.v3.Messager;
-import com.gmail.justbru00.epic.rename.utils.v3.RenameUtil;
-import com.gmail.justbru00.epic.rename.utils.v3.WorldChecker;
 
 public class RemoveLoreLine implements CommandExecutor {
+
+	int cooldownID = 8;
+
+	public RemoveLoreLine() {
+		Main.cooldownAPI.registerCooldown(cooldownID, "removeloreline");
+	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -32,6 +33,11 @@ public class RemoveLoreLine implements CommandExecutor {
 			if (sender.hasPermission("epicrename.removeloreline")) {
 				if (sender instanceof Player) {
 					Player player = (Player) sender;
+
+					if (Main.cooldownAPI.isOnCooldown(player.getUniqueId(), cooldownID) && !player.hasPermission("epicrename.bypasscooldown")) {
+						Messager.msgSenderWithConfigMsg("removeloreline.cooldown", sender, CF.getCoolDownTimeInDays(player.getUniqueId(), cooldownID));
+						return true;
+					}
 					if (WorldChecker.checkWorld(player)) {
 						if (args.length == 1) {
 							
@@ -94,6 +100,7 @@ public class RemoveLoreLine implements CommandExecutor {
 										ItemMeta im = RenameUtil.getInHand(player).getItemMeta();
 										im.setLore(itemLore);
 										RenameUtil.getInHand(player).setItemMeta(im);
+										Main.cooldownAPI.updateCooldown(player, cooldownID);
 										Messager.msgPlayer(Main.getMsgFromConfig("removeloreline.success"), player);
 										return true;
 									} else {

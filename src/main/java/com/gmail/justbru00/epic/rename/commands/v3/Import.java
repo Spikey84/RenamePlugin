@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
+import com.gmail.justbru00.epic.rename.utils.v3.*;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -21,10 +22,6 @@ import org.bukkit.inventory.PlayerInventory;
 import com.gmail.justbru00.epic.rename.exceptions.EpicRenameOnlineExpiredException;
 import com.gmail.justbru00.epic.rename.exceptions.EpicRenameOnlineNotFoundException;
 import com.gmail.justbru00.epic.rename.main.v3.Main;
-import com.gmail.justbru00.epic.rename.utils.v3.Debug;
-import com.gmail.justbru00.epic.rename.utils.v3.ItemSerialization;
-import com.gmail.justbru00.epic.rename.utils.v3.Messager;
-import com.gmail.justbru00.epic.rename.utils.v3.EpicRenameOnlineAPI;
 
 /**
  * Created for #106
@@ -33,6 +30,12 @@ import com.gmail.justbru00.epic.rename.utils.v3.EpicRenameOnlineAPI;
  *
  */
 public class Import implements CommandExecutor {
+
+	int cooldownID = 4;
+
+	public Import() {
+		Main.cooldownAPI.registerCooldown(cooldownID, "import");
+	}
 
 	private static ArrayList<UUID> playersWhoHaveConfirmed = new ArrayList<UUID>();
 
@@ -54,6 +57,10 @@ public class Import implements CommandExecutor {
 			Player p = (Player) sender;
 
 			if (sender.hasPermission("epicrename.import")) {
+				if (Main.cooldownAPI.isOnCooldown(p.getUniqueId(), cooldownID) && !p.hasPermission("epicrename.bypasscooldown")) {
+					Messager.msgSenderWithConfigMsg("import.cooldown", sender, CF.getCoolDownTimeInDays(p.getUniqueId(), cooldownID));
+					return true;
+				}
 
 				if (args.length != 0) {
 					PlayerInventory inv = p.getInventory();
@@ -101,6 +108,7 @@ public class Import implements CommandExecutor {
 								}
 
 								inv.setItemInMainHand(imported);
+								Main.cooldownAPI.updateCooldown(p, cooldownID);
 								Messager.msgSenderWithConfigMsg("import.success", sender);
 								return true;
 							} else {
@@ -153,6 +161,7 @@ public class Import implements CommandExecutor {
 
 							ItemSerialization.fillInventoryFromString(textFromWeb, p);
 
+							Main.cooldownAPI.updateCooldown(p, cooldownID);
 							Messager.msgSenderWithConfigMsg("import.success", sender);
 							return true;
 						} else {
@@ -185,6 +194,7 @@ public class Import implements CommandExecutor {
 
 							inv.setItemInMainHand(importedItem);
 							Messager.msgSenderWithConfigMsg("import.success", sender);
+							Main.cooldownAPI.updateCooldown(p, cooldownID);
 							return true;
 						} else {
 							// Must have empty hand

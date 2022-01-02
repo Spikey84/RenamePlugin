@@ -8,6 +8,7 @@ package com.gmail.justbru00.epic.rename.commands.v3;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.gmail.justbru00.epic.rename.utils.v3.*;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -18,25 +19,29 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import com.gmail.justbru00.epic.rename.enums.v3.EpicRenameCommands;
 import com.gmail.justbru00.epic.rename.main.v3.Main;
-import com.gmail.justbru00.epic.rename.utils.v3.Blacklists;
-import com.gmail.justbru00.epic.rename.utils.v3.Debug;
-import com.gmail.justbru00.epic.rename.utils.v3.FormattingCodeCounter;
-import com.gmail.justbru00.epic.rename.utils.v3.FormattingPermManager;
-import com.gmail.justbru00.epic.rename.utils.v3.MaterialPermManager;
-import com.gmail.justbru00.epic.rename.utils.v3.Messager;
-import com.gmail.justbru00.epic.rename.utils.v3.RenameUtil;
-import com.gmail.justbru00.epic.rename.utils.v3.WorldChecker;
 
 public class InsertLoreLine implements CommandExecutor {
+
+	int cooldownID = 5;
+
+	public InsertLoreLine() {
+		Main.cooldownAPI.registerCooldown(cooldownID, "insertloreline");
+	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		
 		if (command.getName().equalsIgnoreCase("insertloreline")) {
 			if (sender.hasPermission("epicrename.insertloreline")) {
+
 				if (sender instanceof Player) {
 					
 					Player player = (Player) sender;
+
+					if (Main.cooldownAPI.isOnCooldown(player.getUniqueId(), cooldownID) && !player.hasPermission("epicrename.bypasscooldown")) {
+						Messager.msgSenderWithConfigMsg("insertloreline.cooldown", sender, CF.getCoolDownTimeInDays(player.getUniqueId(), cooldownID));
+						return true;
+					}
 					
 					if (WorldChecker.checkWorld(player)) {
 						
@@ -169,6 +174,7 @@ public class InsertLoreLine implements CommandExecutor {
 								im.setLore(newLore);
 								inHand.setItemMeta(im);
 								// SUCCESS
+								Main.cooldownAPI.updateCooldown(player, cooldownID);
 								Messager.msgSenderWithConfigMsg("insertloreline.success", sender);
 								return true;								
 							} else {

@@ -5,19 +5,21 @@
  */
 package com.gmail.justbru00.epic.rename.commands.v3;
 
+import com.gmail.justbru00.epic.rename.utils.v3.*;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import com.gmail.justbru00.epic.rename.main.v3.Main;
-import com.gmail.justbru00.epic.rename.utils.v3.Debug;
-import com.gmail.justbru00.epic.rename.utils.v3.LoreUtil;
-import com.gmail.justbru00.epic.rename.utils.v3.Messager;
-import com.gmail.justbru00.epic.rename.utils.v3.RenameUtil;
-import com.gmail.justbru00.epic.rename.utils.v3.WorldChecker;
 
 public class SetLoreLine implements CommandExecutor {
+
+	int cooldownID = 10;
+
+	public SetLoreLine() {
+		Main.cooldownAPI.registerCooldown(cooldownID, "setloreline");
+	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -27,6 +29,11 @@ public class SetLoreLine implements CommandExecutor {
 				if (sender instanceof Player) {
 
 					Player player = (Player) sender;
+
+					if (Main.cooldownAPI.isOnCooldown(player.getUniqueId(), cooldownID) && !player.hasPermission("epicrename.bypasscooldown")) {
+						Messager.msgSenderWithConfigMsg("setloreline.cooldown", sender, CF.getCoolDownTimeInDays(player.getUniqueId(), cooldownID));
+						return true;
+					}
 
 					if (WorldChecker.checkWorld(player)) {
 
@@ -72,6 +79,7 @@ public class SetLoreLine implements CommandExecutor {
 								return true;
 							}
 
+							Main.cooldownAPI.updateCooldown(player, cooldownID);
 							LoreUtil.setLoreLine(lineNumber, player, args);
 
 							return true;

@@ -2,6 +2,7 @@ package com.gmail.justbru00.epic.rename.commands.v3;
 
 import java.util.Map;
 
+import com.gmail.justbru00.epic.rename.utils.v3.*;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -14,14 +15,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import com.gmail.justbru00.epic.rename.enums.v3.EpicRenameCommands;
 import com.gmail.justbru00.epic.rename.main.v3.Main;
-import com.gmail.justbru00.epic.rename.utils.v3.Blacklists;
-import com.gmail.justbru00.epic.rename.utils.v3.Debug;
-import com.gmail.justbru00.epic.rename.utils.v3.MaterialPermManager;
-import com.gmail.justbru00.epic.rename.utils.v3.Messager;
-import com.gmail.justbru00.epic.rename.utils.v3.RenameUtil;
-import com.gmail.justbru00.epic.rename.utils.v3.WorldChecker;
 
 public class RemoveGlow implements CommandExecutor {
+
+	int cooldownID = 7;
+
+	public RemoveGlow() {
+		Main.cooldownAPI.registerCooldown(cooldownID, "removeglow");
+	}
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -32,6 +33,12 @@ public class RemoveGlow implements CommandExecutor {
 				if (sender instanceof Player) {
 					Player player = (Player) sender;
 					if (WorldChecker.checkWorld(player)) {
+
+						if (Main.cooldownAPI.isOnCooldown(player.getUniqueId(), cooldownID) && !player.hasPermission("epicrename.bypasscooldown")) {
+							Messager.msgSenderWithConfigMsg("removeglow.cooldown", sender, CF.getCoolDownTimeInDays(player.getUniqueId(), cooldownID));
+							return true;
+						}
+
 						ItemStack inHand = RenameUtil.getInHand(player);
 						Material m = inHand.getType();
 						
@@ -81,6 +88,7 @@ public class RemoveGlow implements CommandExecutor {
 									} else { // Use older method.
 										player.setItemInHand(inHand);
 									}
+									Main.cooldownAPI.updateCooldown(player, cooldownID);
 									Messager.msgSender(Main.getMsgFromConfig("removeglow.success"), sender);
 								} else {
 									Messager.msgSender(Main.getMsgFromConfig("removeglow.not_glowing"), sender);
@@ -102,6 +110,7 @@ public class RemoveGlow implements CommandExecutor {
 									} else { // Use older method.
 										player.setItemInHand(inHand);
 									}
+									Main.cooldownAPI.updateCooldown(player, cooldownID);
 									Messager.msgSender(Main.getMsgFromConfig("removeglow.success"), sender);
 								} else {
 									Messager.msgSender(Main.getMsgFromConfig("removeglow.not_glowing"), sender);

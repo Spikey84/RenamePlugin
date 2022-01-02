@@ -3,6 +3,7 @@ package com.gmail.justbru00.epic.rename.commands.v3;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.gmail.justbru00.epic.rename.utils.v3.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -14,12 +15,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import com.gmail.justbru00.epic.rename.enums.v3.EpicRenameCommands;
 import com.gmail.justbru00.epic.rename.main.v3.Main;
-import com.gmail.justbru00.epic.rename.utils.v3.Blacklists;
-import com.gmail.justbru00.epic.rename.utils.v3.Debug;
-import com.gmail.justbru00.epic.rename.utils.v3.MaterialPermManager;
-import com.gmail.justbru00.epic.rename.utils.v3.Messager;
-import com.gmail.justbru00.epic.rename.utils.v3.RenameUtil;
-import com.gmail.justbru00.epic.rename.utils.v3.WorldChecker;
 import com.gmail.justbru00.epic.rename.utils.v3.align.FormatItem;
 import com.gmail.justbru00.epic.rename.utils.v3.align.TableGenerator;
 import com.gmail.justbru00.epic.rename.utils.v3.align.TableGenerator.Alignment;
@@ -37,6 +32,7 @@ public class Align implements CommandExecutor {
 	private static final int ALIGN_LEFT = 1;
 	private static final int ALIGN_CENTER = 2;
 	private static final int ALIGN_RIGHT = 3;
+	int cooldownID = 0;
 	
 	public static void main(String[] args) {
 		// Test the align stuff
@@ -50,14 +46,25 @@ public class Align implements CommandExecutor {
 		}
 	}
 
+	public Align() {
+		Main.cooldownAPI.registerCooldown(cooldownID, "align");
+	}
+
 	@SuppressWarnings("deprecation")
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		
 		if (command.getName().equalsIgnoreCase("align")) {
 			if (sender.hasPermission("epicrename.align")) {
+
+
+
 				if (sender instanceof Player) {
 					Player player = (Player) sender;
+					if (Main.cooldownAPI.isOnCooldown(player.getUniqueId(), cooldownID) && !player.hasPermission("epicrename.bypasscooldown")) {
+						Messager.msgSenderWithConfigMsg("align.cooldown", sender, CF.getCoolDownTimeInDays(player.getUniqueId(), cooldownID));
+						return true;
+					}
 					
 					if (WorldChecker.checkWorld(player)) {
 						ItemStack inHand = RenameUtil.getInHand(player);
@@ -123,6 +130,7 @@ public class Align implements CommandExecutor {
 							
 							if (args[0].equalsIgnoreCase("name")) {
 								if (args[1].equalsIgnoreCase("left")) {
+									Main.cooldownAPI.updateCooldown(player, cooldownID);
 									ArrayList<String> aligned = alignStringsClient(textToAlign, ALIGN_LEFT);
 									
 									ItemMeta meta = inHand.getItemMeta();
@@ -147,6 +155,7 @@ public class Align implements CommandExecutor {
 									Messager.msgSenderWithConfigMsg("align.name_aligned_left_success", sender);
 									return true;
 								} else if (args[1].equalsIgnoreCase("center")) {
+									Main.cooldownAPI.updateCooldown(player, cooldownID);
 									ArrayList<String> aligned = alignStringsClient(textToAlign, ALIGN_CENTER);
 									
 									ItemMeta meta = inHand.getItemMeta();
@@ -171,6 +180,7 @@ public class Align implements CommandExecutor {
 									Messager.msgSenderWithConfigMsg("align.name_aligned_center_success", sender);
 									return true;
 								} else if (args[1].equalsIgnoreCase("right")) {
+									Main.cooldownAPI.updateCooldown(player, cooldownID);
 									ArrayList<String> aligned = alignStringsClient(textToAlign, ALIGN_RIGHT);
 									
 									ItemMeta meta = inHand.getItemMeta();
@@ -199,6 +209,7 @@ public class Align implements CommandExecutor {
 									return true;
 								}
 							} else if (args[0].equalsIgnoreCase("lore")) {
+								Main.cooldownAPI.updateCooldown(player, cooldownID);
 								if (args[1].equalsIgnoreCase("left")) {
 									ArrayList<String> aligned = alignStringsClient(textToAlign, ALIGN_LEFT);
 									
@@ -223,6 +234,7 @@ public class Align implements CommandExecutor {
 									Messager.msgSenderWithConfigMsg("align.lore_aligned_left_success", sender);
 									return true;
 								} else if (args[1].equalsIgnoreCase("center")) {
+									Main.cooldownAPI.updateCooldown(player, cooldownID);
 									ArrayList<String> aligned = alignStringsClient(textToAlign, ALIGN_CENTER);
 									
 									ItemMeta meta = inHand.getItemMeta();
@@ -246,6 +258,7 @@ public class Align implements CommandExecutor {
 									Messager.msgSenderWithConfigMsg("align.lore_aligned_center_success", sender);
 									return true;
 								} else if (args[1].equalsIgnoreCase("right")) {
+									Main.cooldownAPI.updateCooldown(player, cooldownID);
 									ArrayList<String> aligned = alignStringsClient(textToAlign, ALIGN_RIGHT);
 									
 									ItemMeta meta = inHand.getItemMeta();
@@ -273,7 +286,9 @@ public class Align implements CommandExecutor {
 									return true;
 								}
 							} else if (args[0].equalsIgnoreCase("both")) {
+								Main.cooldownAPI.updateCooldown(player, cooldownID);
 								if (args[1].equalsIgnoreCase("left")) {
+									Main.cooldownAPI.updateCooldown(player, cooldownID);
 									ArrayList<String> aligned = alignStringsClient(textToAlign, ALIGN_LEFT);
 									
 									ItemMeta meta = inHand.getItemMeta();
@@ -297,6 +312,7 @@ public class Align implements CommandExecutor {
 									Messager.msgSenderWithConfigMsg("align.both_aligned_left_success", sender);
 									return true;
 								} else if (args[1].equalsIgnoreCase("center")) {
+									Main.cooldownAPI.updateCooldown(player, cooldownID);
 									ArrayList<String> aligned = alignStringsClient(textToAlign, ALIGN_CENTER);
 									
 									ItemMeta meta = inHand.getItemMeta();
@@ -320,6 +336,7 @@ public class Align implements CommandExecutor {
 									Messager.msgSenderWithConfigMsg("align.both_aligned_center_success", sender);
 									return true;
 								} else if (args[1].equalsIgnoreCase("right")) {
+									Main.cooldownAPI.updateCooldown(player, cooldownID);
 									ArrayList<String> aligned = alignStringsClient(textToAlign, ALIGN_RIGHT);
 									
 									ItemMeta meta = inHand.getItemMeta();

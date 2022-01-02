@@ -5,6 +5,7 @@
  */
 package com.gmail.justbru00.epic.rename.commands.v3;
 
+import com.gmail.justbru00.epic.rename.utils.v3.CF;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -16,6 +17,12 @@ import com.gmail.justbru00.epic.rename.utils.v3.Messager;
 import com.gmail.justbru00.epic.rename.utils.v3.WorldChecker;
 
 public class Lore implements CommandExecutor {
+
+	int cooldownID = 6;
+
+	public Lore() {
+		Main.cooldownAPI.registerCooldown(cooldownID, "lore");
+	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -30,10 +37,15 @@ public class Lore implements CommandExecutor {
 
 					if (player.hasPermission("epicrename.lore")) {
 
+						if (Main.cooldownAPI.isOnCooldown(player.getUniqueId(), cooldownID) && !player.hasPermission("epicrename.bypasscooldown")) {
+							Messager.msgSenderWithConfigMsg("lore.cooldown", sender, CF.getCoolDownTimeInDays(player.getUniqueId(), cooldownID));
+							return true;
+						}
+
 						if (args.length >= 1) {
 
 							LoreUtil.loreHandle(args, player);
-
+							Main.cooldownAPI.updateCooldown(player, cooldownID);
 							return true;
 						} else {
 							Messager.msgPlayer(Main.getMsgFromConfig("lore.no_args"), player);

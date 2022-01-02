@@ -121,6 +121,12 @@ public class Messager {
 		msg = VariableReplacer.replace(msg);
 		sender.sendMessage(Main.prefix + Messager.color(msg));
 	}
+
+	public static void msgSenderWithConfigMsg(String msgPath, CommandSender sender, String formatted) {
+		String msg = Main.getMsgFromConfig(msgPath).formatted(formatted);
+		msg = VariableReplacer.replace(msg);
+		sender.sendMessage(Main.prefix + Messager.color(msg));
+	}
 	
 	public static void msgSender(String msg, CommandSender sender) {
 		msg = VariableReplacer.replace(msg);
