@@ -6,9 +6,9 @@ Made by: Justin Brubaker
 This fork allows most commands to have cooldowns on them. This relys on another plugin of mine called cooldownapi. CooldownAPI must be enabled on the server for cooldowns to work as intended. Below is a guide to controlling cooldown lengths and bypassing if needed.
 
 Permissions:
-`epicrename.bypasscooldown - Bypasses all cooldowns (ops bypass by default)`
-
 ```
+epicrename.bypasscooldown - Bypasses all cooldowns (ops bypass by default)
+
 cooldownapi.epicrename.rename.(number of minutes) - causes the player with this permission to wait the number of minutes provided until running the command.
 cooldownapi.epicrename.align.(number of minutes)
 cooldownapi.epicrename.glow.(number of minutes)
