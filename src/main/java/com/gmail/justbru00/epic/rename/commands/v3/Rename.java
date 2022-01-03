@@ -48,7 +48,7 @@ public class Rename implements CommandExecutor {
 
 						if (args.length >= 1) {
 
-							Main.cooldownAPI.updateCooldown(player, cooldownID);
+
 							RenameUtil.renameHandle(player, args, RENAME);
 
 							return true;

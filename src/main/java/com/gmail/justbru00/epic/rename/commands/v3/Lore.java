@@ -45,7 +45,7 @@ public class Lore implements CommandExecutor {
 						if (args.length >= 1) {
 
 							LoreUtil.loreHandle(args, player);
-							Main.cooldownAPI.updateCooldown(player, cooldownID);
+
 							return true;
 						} else {
 							Messager.msgPlayer(Main.getMsgFromConfig("lore.no_args"), player);

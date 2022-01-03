@@ -96,6 +96,7 @@ public class RenameUtil {
 											}
 
 											if (Main.USE_NEW_GET_HAND) { // Use 1.9+ method
+												Main.cooldownAPI.updateCooldown(player, 9);
 												player.getInventory().setItemInMainHand(
 														RenameUtil.renameItemStack(player, args, inHand));
 												Messager.msgPlayer(Main.getMsgFromConfig("rename.success"), player);
@@ -105,6 +106,7 @@ public class RenameUtil {
 												return;
 											} else { // Use older method.
 												player.setItemInHand(RenameUtil.renameItemStack(player, args, inHand));
+												Main.cooldownAPI.updateCooldown(player, 9);
 												Messager.msgPlayer(Main.getMsgFromConfig("rename.success"), player);
 												Messager.msgConsole(Main.getMsgFromConfig("rename.log")
 														.replace("{player}", player.getName())

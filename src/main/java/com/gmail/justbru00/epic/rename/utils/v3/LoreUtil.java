@@ -228,10 +228,12 @@ public class LoreUtil {
 
 									if (Main.USE_NEW_GET_HAND) { // Use 1.9+ method
 										player.getInventory().setItemInMainHand(toLore);
+										Main.cooldownAPI.updateCooldown(player, 6);
 										Messager.msgPlayer(Main.getMsgFromConfig("lore.success"), player);
 										return;
 									} else { // Use older method.
 										player.setItemInHand(toLore);
+										Main.cooldownAPI.updateCooldown(player, 6);
 										Messager.msgPlayer(Main.getMsgFromConfig("lore.success"), player);
 										return;
 									}
