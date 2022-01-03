@@ -9,7 +9,7 @@ public class CF {
 
     public static String getCoolDownTimeInDays(UUID uuid, int id) {
         long secs = Main.cooldownAPI.getRemainingSeconds(uuid, id);
-        if (secs < 60) return secs + "Second(s)";
+        if (secs < 60) return secs + " Second(s)";
 
         long days = (long) Math.floor(TimeUnit.SECONDS.toDays(secs));
         long hours = (long) Math.floor(TimeUnit.SECONDS.toHours(secs) - (days*24));
