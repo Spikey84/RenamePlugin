@@ -10,33 +10,43 @@ commands:
   rename:
     description: Renames items.
     aliases: [eprename]
+    permission: epicrename.rename
   lore:
     description: Relores any item.   
     aliases: [eplore]
+    permission: epicrename.lore
   epicrename:
     description: Plugin information command.
     aliases: [epepicrename]
+    permission: epicrename.epicrename
   setloreline:
     description: Sets a certain line of lore.
     aliases: [epsetloreline,sll]
+    permission: epicrename.setloreline
   removeloreline:
     description: Remove a line of lore.     
     aliases: [epremoveloreline,rll]
+    permission: epicrename.removeloreline
   insertloreline:
     description: Insert a certain line of lore.
     aliases: [epinsertloreline,ill]
+    permission: epicrename.insertloreline
   glow:
     description: Adds an enchantment glow.  
     aliases: [epglow]
+    permission: epicrename.glow
   removeglow:
     description: Removes an enchantment glow.     
-    aliases: [epremoveglow]     
+    aliases: [epremoveglow]
+    permission: epicrename.removeglow
   import:
     description: Imports items from a URL.
     aliases: [epimport]
+    permission: epicrename.import
   export:
     description: Exports items to EpicRenameOnline.
-    aliases: [epexport]    
+    aliases: [epexport]
+    permission: epicrename.export
     
 permissions:
   epicrename.epicrename:
