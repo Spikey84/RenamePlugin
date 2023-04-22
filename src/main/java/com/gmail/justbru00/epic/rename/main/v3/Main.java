@@ -296,14 +296,7 @@ public class Main extends JavaPlugin {
 	public static PluginFile getMessagesYmlFile() {
 		return messages;
 	}
-	
-	/**
-	 * Issue #162
-	 * Saves the given value to the stats.yml file.
-	 * Will only actually save the value to the file if it is different than the value already set in the file.
-	 * This is to prevent any extra IO calls.
-	 * @param The boolean value of EpicRenameOnline feature use.
-	 */
+
 	public static void setEpicRenameOnlineFeaturesUsedBefore(boolean value) {
 		if (statsFile != null) {
 			if (statsFile.isBoolean("epicrenameonline_features_used_before")) {

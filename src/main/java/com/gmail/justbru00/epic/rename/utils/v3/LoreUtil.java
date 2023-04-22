@@ -8,6 +8,8 @@ package com.gmail.justbru00.epic.rename.utils.v3;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.gmail.justbru00.epic.rename.spikeyutils.inventory.ConfirmInventory;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -221,20 +223,34 @@ public class LoreUtil {
 										return;
 									}
 
-									ItemStack toLore = inHand;
+									ItemStack toLore = inHand.clone();
 									ItemMeta toLoreMeta = toLore.getItemMeta();
 									toLoreMeta.setLore(LoreUtil.buildLoreFromArgs(args, true));
 									toLore.setItemMeta(toLoreMeta);
 
 									if (Main.USE_NEW_GET_HAND) { // Use 1.9+ method
-										player.getInventory().setItemInMainHand(toLore);
-										Main.cooldownAPI.updateCooldown(player, 6);
-										Messager.msgPlayer(Main.getMsgFromConfig("lore.success"), player);
+										new ConfirmInventory(Main.plugin, "Set Lore", player, (b) -> {
+											if (b) {
+												inHand.setAmount(0);
+												player.getInventory().setItemInMainHand(toLore);
+												Main.cooldownAPI.updateCooldown(player, 6);
+												Messager.msgPlayer(Main.getMsgFromConfig("lore.success"), player);
+											} else {
+												player.sendMessage("Lore not applied.");
+											}
+										}).open(player);
 										return;
 									} else { // Use older method.
-										player.setItemInHand(toLore);
-										Main.cooldownAPI.updateCooldown(player, 6);
-										Messager.msgPlayer(Main.getMsgFromConfig("lore.success"), player);
+										new ConfirmInventory(Main.plugin, "Set Lore", player, (b) -> {
+											if (b) {
+												inHand.setAmount(0);
+												player.setItemInHand(toLore);
+												Main.cooldownAPI.updateCooldown(player, 6);
+												Messager.msgPlayer(Main.getMsgFromConfig("lore.success"), player);
+											} else {
+												player.sendMessage("Lore not applied.");
+											}
+										}).open(player);
 										return;
 									}
 
