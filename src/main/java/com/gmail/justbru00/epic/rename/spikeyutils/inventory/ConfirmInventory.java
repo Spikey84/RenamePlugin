@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 
 public class ConfirmInventory extends BaseInventory {
     public ConfirmInventory(Plugin plugin, String title, Player player, Consumer<Boolean> consumer) {
-        super(1, plugin, title);
+        super(1, plugin, title, player);
 
         fillInventory(I.getFiller());
 

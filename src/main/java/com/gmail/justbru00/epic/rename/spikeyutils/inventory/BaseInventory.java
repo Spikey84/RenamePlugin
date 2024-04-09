@@ -9,6 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -23,11 +24,13 @@ public class BaseInventory implements InventoryHolder, Listener {
     private Inventory inventory;
     private HashMap<Integer, Consumer<ClickType>> clickableItems;
     private boolean isOpen = false;
+    private Player player;
 
-    public BaseInventory(int rows, Plugin plugin, String title) {
+    public BaseInventory(int rows, Plugin plugin, String title, Player player) {
         clickableItems = Maps.newHashMap();
         this.inventory = Bukkit.createInventory(this, rows*9, StringUtils.formatColors(title));
         Bukkit.getPluginManager().registerEvents(this, plugin);
+        this.player = player;
     }
 
    public void addItem(int slot, ItemStack item) {
@@ -48,8 +51,9 @@ public class BaseInventory implements InventoryHolder, Listener {
    }
 
    public void open(Player player) {
-        player.openInventory(inventory);
         isOpen = true;
+        player.openInventory(inventory);
+
    }
 
 
@@ -87,6 +91,14 @@ public class BaseInventory implements InventoryHolder, Listener {
         if (!event.getInventory().equals(inventory)) return;
 
         isOpen = false;
+    }
+
+    @EventHandler
+    public void dropItemEvent(PlayerDropItemEvent event) {
+        if (!event.getPlayer().equals(player)) return;
+        if (!isOpen) return;
+        event.setCancelled(true);
+
     }
 
 }
