@@ -223,15 +223,16 @@ public class LoreUtil {
 										return;
 									}
 
-									ItemStack toLore = inHand.clone();
-									ItemMeta toLoreMeta = toLore.getItemMeta();
-									toLoreMeta.setLore(LoreUtil.buildLoreFromArgs(args, true));
-									toLore.setItemMeta(toLoreMeta);
 
 									if (Main.USE_NEW_GET_HAND) { // Use 1.9+ method
 										new ConfirmInventory(Main.plugin, "Set Lore", player, (b) -> {
 											if (b) {
-												inHand.setAmount(0);
+												ItemStack iH = RenameUtil.getInHand(player);
+												ItemStack toLore = iH.clone();
+												ItemMeta toLoreMeta = toLore.getItemMeta();
+												toLoreMeta.setLore(LoreUtil.buildLoreFromArgs(args, true));
+												toLore.setItemMeta(toLoreMeta);
+												iH.setAmount(0);
 												player.getInventory().setItemInMainHand(toLore);
 												Main.cooldownAPI.updateCooldown(player, 6);
 												Messager.msgPlayer(Main.getMsgFromConfig("lore.success"), player);
@@ -243,7 +244,12 @@ public class LoreUtil {
 									} else { // Use older method.
 										new ConfirmInventory(Main.plugin, "Set Lore", player, (b) -> {
 											if (b) {
-												inHand.setAmount(0);
+												ItemStack iH = RenameUtil.getInHand(player);
+												ItemStack toLore = iH.clone();
+												ItemMeta toLoreMeta = toLore.getItemMeta();
+												toLoreMeta.setLore(LoreUtil.buildLoreFromArgs(args, true));
+												toLore.setItemMeta(toLoreMeta);
+												iH.setAmount(0);
 												player.setItemInHand(toLore);
 												Main.cooldownAPI.updateCooldown(player, 6);
 												Messager.msgPlayer(Main.getMsgFromConfig("lore.success"), player);
