@@ -66,6 +66,7 @@ public class BaseInventory implements InventoryHolder, Listener {
     public void onClick(InventoryClickEvent event) {
 
         if (event.getClickedInventory() == null) return;
+        if (!((Player) event.getWhoClicked()).equals(player)) return;
 
         if (!event.getClickedInventory().equals(inventory)) {
             if (event.getClickedInventory().equals(event.getWhoClicked().getInventory()) && isOpen) {
